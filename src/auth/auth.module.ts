@@ -8,9 +8,11 @@ import { GoogleStrategy } from './strategies/google.strategy.';
 import { FacebookStrategy } from './strategies/facebook.strategy';
 import { GoogleOAuthService } from './services/google-oauth.service';
 import { FacebookOAuthService } from './services/facebook-oauth.service';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
     imports: [
+        UsersModule,
         JwtModule.registerAsync({
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({

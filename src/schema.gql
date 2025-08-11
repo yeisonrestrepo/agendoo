@@ -1,0 +1,138 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AuthResponse {
+  accessToken: String!
+  refreshToken: String!
+  requiresOnboarding: Boolean!
+  user: User!
+}
+
+type Barber {
+  businessName: String!
+  createdAt: DateTime!
+  description: String
+  id: ID!
+  services: [Service!]!
+  user: User!
+  verified: Boolean!
+}
+
+type Booking {
+  barber: Barber!
+  client: User!
+  createdAt: DateTime!
+  dateTime: DateTime!
+  id: ID!
+  notes: String
+  service: Service!
+  status: BookingStatus!
+  updatedAt: DateTime!
+}
+
+enum BookingStatus {
+  CANCELLED
+  COMPLETED
+  CONFIRMED
+  PENDING
+}
+
+input CreateBookingInput {
+  barberId: String!
+  dateTime: String!
+  notes: String
+  serviceId: String!
+}
+
+input CreateServiceInput {
+  description: String
+  duration: Int!
+  name: String!
+  price: Float!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  createBooking(input: CreateBookingInput!): Booking!
+  createService(input: CreateServiceInput!): Service!
+  login(input: LoginInput!): AuthResponse!
+  loginWithFacebook(input: OAuthLoginInput!): AuthResponse!
+  loginWithGoogle(input: OAuthLoginInput!): AuthResponse!
+  register(input: RegisterInput!): AuthResponse!
+  updateBookingStatus(bookingId: String!, status: BookingStatus!): Booking!
+  updateProfile(input: UpdateProfileInput!): Profile!
+}
+
+input OAuthLoginInput {
+  token: String!
+  userType: UserRole!
+}
+
+type Profile {
+  address: String
+  avatarUrl: String
+  id: String!
+  lat: Float
+  lng: Float
+  name: String!
+  onboardingCompleted: Boolean!
+  phone: String
+}
+
+type Query {
+  getBarber(id: String!): Barber!
+  getBarbers: [Barber!]!
+  getMyBookings: [Booking!]!
+  getServices(barberId: String!): [Service!]!
+  me: User!
+}
+
+input RegisterInput {
+  email: String!
+  name: String!
+  password: String!
+  role: UserRole
+}
+
+type Service {
+  active: Boolean!
+  description: String
+  duration: Int!
+  id: ID!
+  name: String!
+  price: Float!
+}
+
+input UpdateProfileInput {
+  address: String
+  lat: Float
+  lng: Float
+  name: String
+  phone: String
+}
+
+type User {
+  createdAt: DateTime!
+  email: String!
+  emailVerified: Boolean!
+  id: ID!
+  profile: Profile
+  role: UserRole!
+  updatedAt: DateTime!
+}
+
+enum UserRole {
+  ADMIN
+  BARBER
+  CLIENT
+}

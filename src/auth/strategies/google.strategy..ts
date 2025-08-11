@@ -20,13 +20,37 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
-    const { id, name, emails, photos } = profile;
-    const user = {
-      id,
-      email: emails[0].value,
-      displayName: name.givenName + ' ' + name.familyName,
-      photos,
-    };
-    done(null, user);
+    try {
+      const { id, name, emails, photos } = profile;
+
+      // Validar que tenemos la información mínima requerida
+      if (!id) {
+        return done(new Error('Google profile ID is required'), undefined);
+      }
+
+      // Validar email
+      if (!emails || !emails.length || !emails[0]?.value) {
+        return done(new Error('Google email is required'), undefined);
+      }
+
+      // Construir nombre de display de forma segura
+      let displayName = 'Usuario Google';
+      if (name) {
+        const firstName = name.givenName || '';
+        const lastName = name.familyName || '';
+        displayName = `${firstName} ${lastName}`.trim() || name.displayName || 'Usuario Google';
+      }
+
+      const user = {
+        id,
+        email: emails[0].value,
+        displayName,
+        photos: photos || [],
+      };
+
+      done(null, user);
+    } catch (error) {
+      done(error, undefined);
+    }
   }
 }

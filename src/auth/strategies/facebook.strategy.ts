@@ -21,13 +21,37 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     profile: Profile,
     done: (err: any, user: any, info?: any) => void,
   ): Promise<any> {
-    const { id, name, emails, photos } = profile;
-    const user = {
-      id,
-      email: emails[0].value,
-      displayName: name.givenName + ' ' + name.familyName,
-      photos,
-    };
-    done(null, user);
+    try {
+      const { id, name, emails, photos } = profile;
+      
+      // Validar que tenemos la información mínima requerida
+      if (!id) {
+        return done(new Error('Facebook profile ID is required'), null);
+      }
+
+      // Validar email
+      if (!emails || !emails.length || !emails[0]?.value) {
+        return done(new Error('Facebook email is required'), null);
+      }
+
+      // Construir nombre de display de forma segura
+      let displayName = 'Usuario Facebook';
+      if (name) {
+        const firstName = name.givenName || '';
+        const lastName = name.familyName || '';
+        displayName = `${firstName} ${lastName}`.trim() || 'Usuario Facebook';
+      }
+
+      const user = {
+        id,
+        email: emails[0].value,
+        displayName,
+        photos: photos || [],
+      };
+
+      done(null, user);
+    } catch (error) {
+      done(error, null);
+    }
   }
 }
