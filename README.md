@@ -1,98 +1,110 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 📱 Agendoo Backend - Fase 1 (MVP Core)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+> Backend para plataforma de reservas de barberos construido con NestJS, PostgreSQL 15 y GraphQL
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🎯 ¿Qué es Agendoo?
 
-## Description
+**Agendoo** es una plataforma que conecta barberos y barbershops con clientes a través de aplicaciones móviles React Native. Los clientes pueden encontrar barberos cercanos, ver sus servicios, hacer reservas y pagar de forma segura.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### 🏗️ Fase 1 - MVP Core (Lo que tenemos ahora)
 
-## Project setup
+En esta primera fase hemos construido las funcionalidades esenciales:
 
+#### ✅ **Sistema de Autenticación Completo**
+- 🔐 Login/Registro tradicional con email y contraseña
+- 🌐 Autenticación OAuth con Google, Facebook y Apple ID
+- 🔑 JWT tokens para sesiones seguras
+- 👥 Roles diferenciados: Cliente, Barbero, Administrador
+
+#### ✅ **Gestión de Usuarios**
+- 👤 Perfiles personalizables con foto, teléfono, dirección
+- 📍 Geolocalización para ubicar barberos cercanos
+- ⚡ Onboarding diferenciado según tipo de usuario
+
+#### ✅ **Sistema de Barberos**
+- 🏪 Perfiles de negocio con información detallada
+- ✂️ Catálogo de servicios (cortes, precios, duración)
+- ⭐ Sistema básico de calificaciones
+- 📍 Búsqueda geoespacial por proximidad
+
+#### ✅ **Sistema de Reservas**
+- 📅 Crear reservas con fecha/hora específica
+- 🔄 Estados de reserva (Pendiente, Confirmada, Cancelada, Completada)
+- 📝 Notas adicionales para el barbero
+- 📋 Historial de reservas para clientes y barberos
+
+#### ✅ **API GraphQL Robusta**
+- 🔍 Queries optimizadas para evitar N+1 queries
+- 🛡️ Validación y sanitización de inputs
+- 📊 Esquema auto-documentado
+- 🎮 GraphQL Playground para testing
+
+## 🛠️ Tecnologías Utilizadas
+
+| Tecnología | Versión | Propósito |
+|------------|---------|-----------|
+| **NestJS** | 10.x | Framework backend modular |
+| **GraphQL** | 16.x | API query language |
+| **TypeORM** | 0.3.x | ORM para base de datos |
+| **PostgreSQL** | 15 | Base de datos principal |
+| **PostGIS** | Latest | Extensión para geolocalización |
+| **Redis** | 7.x | Cache y sesiones |
+| **JWT** | Latest | Autenticación stateless |
+| **Passport** | Latest | Estrategias de autenticación |
+| **Bcrypt** | Latest | Hashing de contraseñas |
+
+## 🚀 Instalación y Setup
+
+### Requisitos Previos
+- **Node.js 18+** 
+- **Yarn 1.22+** 
+- **Docker & Docker Compose** (para desarrollo)
+- **PostgreSQL 15** (opcional si usas Docker)
+
+### 1. **Instalación de Dependencias**
 ```bash
-$ yarn install
+# Instalar TODAS las dependencias necesarias
+yarn install
+
+# Verificar instalación
+yarn install --check-files
 ```
 
-## Compile and run the project
-
+### 2. **Configurar Base de Datos (PostgreSQL 15)**
 ```bash
-# development
-$ yarn run start
+# Iniciar PostgreSQL 15 con Docker
+docker-compose up -d postgres redis
 
-# watch mode
-$ yarn run start:dev
+# Verificar que está funcionando
+docker ps
 
-# production mode
-$ yarn run start:prod
+# Ver logs si hay problemas
+docker-compose logs postgres
 ```
 
-## Run tests
-
+### 3. **Configurar Variables de Entorno**
 ```bash
-# unit tests
-$ yarn run test
+# Copiar archivo de ejemplo
+cp .env.example .env
 
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+# Editar con tus configuraciones
+nano .env  # o tu editor preferido
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### 4. **Inicializar Base de Datos**
 ```bash
-$ yarn install -g @nestjs/mau
-$ mau deploy
+# Ejecutar migraciones
+yarn migration:run
+
+# Verificar que se aplicaron correctamente
+yarn typeorm migration:show
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 5. **Iniciar Servidor de Desarrollo**
+```bash
+# Iniciar con hot reload
+yarn start:dev
 
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# Deberías ver:
+# 🚀 Server running on http://localhost:4000/graphql
+```
