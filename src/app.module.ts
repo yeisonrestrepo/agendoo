@@ -4,6 +4,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
+import { AuthModule } from './auth/auth.module';
+import { BarbersModule } from './barbers/barbers.module';
+import { BookingsModule } from './bookings/bookings.module';
+import { CommonModule } from './common/common.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -38,6 +43,12 @@ import { join } from 'path';
       csrfPrevention: false,
       cache: 'bounded',
     }),
+
+    UsersModule,
+    BarbersModule,
+    BookingsModule,
+    CommonModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
