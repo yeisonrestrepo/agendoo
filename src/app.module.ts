@@ -9,6 +9,7 @@ import { BarbersModule } from './barbers/barbers.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { CommonModule } from './common/common.module';
 import { UsersModule } from './users/users.module';
+import { ProfessionalsModule } from './professionals/professionals.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { UsersModule } from './users/users.module';
     BookingsModule,
     CommonModule,
     AuthModule,
+    ProfessionalsModule,
   ],
 })
 export class AppModule {}

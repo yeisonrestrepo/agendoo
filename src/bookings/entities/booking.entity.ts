@@ -1,8 +1,8 @@
 import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { Barber } from '../../barbers/entities/barber.entity';
-import { Service } from '../../barbers/entities/service.entity';
+import { Professional } from 'src/professionals/entities/professional.entity';
+import { Service } from 'src/professionals/entities/service.entity';
 
 export enum BookingStatus {
   PENDING = 'PENDING',
@@ -26,7 +26,7 @@ export class Booking {
   clientId: string;
 
   @Column()
-  barberId: string;
+  professionalId: string;
 
   @Column()
   serviceId: string;
@@ -59,9 +59,9 @@ export class Booking {
   @Field(() => User)
   client: User;
 
-  @ManyToOne(() => Barber, barber => barber.bookings)
-  @Field(() => Barber)
-  barber: Barber;
+  @ManyToOne(() => Professional, professional => professional.bookings)
+  @Field(() => Professional)
+  professional: Professional;
 
   @ManyToOne(() => Service, service => service.bookings)
   @Field(() => Service)
