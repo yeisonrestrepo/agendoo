@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { User, UserRole } from '../users/entities/user.entity';
 import { Profile } from '../users/entities/profile.entity';
 import { OAuthConnection } from '../users/entities/oauth-connection.entity';
-import { LoginInput, RegisterInput, OAuthLoginInput } from './dto/auth.dto';
+import { LoginInput, RegisterInput } from './dto/auth.dto';
 import { AuthResponse } from './dto/auth-response.dto';
 
 @Injectable()
@@ -53,7 +53,7 @@ export class AuthService {
     return {
       ...tokens,
       user: { ...savedUser, profile },
-      requiresOnboarding: savedUser.role === UserRole.BARBER,
+      requiresOnboarding: savedUser.role === UserRole.PROFESSIONAL,
     };
   }
 
@@ -78,7 +78,7 @@ export class AuthService {
     return {
       ...tokens,
       user,
-      requiresOnboarding: user.role === UserRole.BARBER && !user.profile?.onboardingCompleted,
+      requiresOnboarding: user.role === UserRole.PROFESSIONAL && !user.profile?.onboardingCompleted,
     };
   }
 
@@ -98,7 +98,7 @@ export class AuthService {
       return {
         ...tokens,
         user: oauthConnection.user,
-        requiresOnboarding: oauthConnection.user.role === UserRole.BARBER && 
+        requiresOnboarding: oauthConnection.user.role === UserRole.PROFESSIONAL && 
                           !oauthConnection.user.profile?.onboardingCompleted,
       };
     }
@@ -144,7 +144,7 @@ export class AuthService {
     return {
       ...tokens,
       user,
-      requiresOnboarding: user.role === UserRole.BARBER && !user.profile?.onboardingCompleted,
+      requiresOnboarding: user.role === UserRole.PROFESSIONAL && !user.profile?.onboardingCompleted,
     };
   }
 

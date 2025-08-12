@@ -5,7 +5,7 @@ import { IsUUID, IsDateString, IsOptional, IsString } from 'class-validator';
 export class CreateBookingInput {
   @Field()
   @IsUUID()
-  barberId: string;
+  professionalId: string;
 
   @Field()
   @IsUUID()

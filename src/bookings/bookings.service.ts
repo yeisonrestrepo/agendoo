@@ -21,7 +21,7 @@ export class BookingsService {
 
     const booking = this.bookingsRepository.create({
       clientId,
-      barberId: input.barberId,
+      professionalId: input.professionalId,
       serviceId: input.serviceId,
       dateTime: bookingDate,
       notes: input.notes,

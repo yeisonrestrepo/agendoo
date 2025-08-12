@@ -6,7 +6,7 @@ import { Booking } from '../../bookings/entities/booking.entity';
 
 export enum UserRole {
   CLIENT = 'CLIENT',
-  BARBER = 'BARBER',
+  PROFESSIONAL = 'PROFESSIONAL',
   ADMIN = 'ADMIN',
 }
 

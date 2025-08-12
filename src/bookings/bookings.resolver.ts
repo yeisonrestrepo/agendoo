@@ -23,8 +23,8 @@ export class BookingsResolver {
   @Query(() => [Booking])
   @UseGuards(JwtAuthGuard)
   async getMyBookings(@CurrentUser() user: User): Promise<Booking[]> {
-    const isBarber = user.role === UserRole.BARBER;
-    return this.bookingsService.findByUser(user.id, isBarber);
+    const isProfessional = user.role === UserRole.PROFESSIONAL;
+    return this.bookingsService.findByUser(user.id, isProfessional);
   }
 
   @Mutation(() => Booking)

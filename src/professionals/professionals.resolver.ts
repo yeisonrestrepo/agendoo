@@ -53,7 +53,7 @@ export class ProfessionalsResolver {
     @CurrentUser() user: User,
     @Args('input') input: CreateServiceInput,
   ): Promise<Service> {
-    if (user.role !== UserRole.BARBER) {
+    if (user.role !== UserRole.PROFESSIONAL) {
       throw new Error('Only beauty professionals can create services');
     }
 
