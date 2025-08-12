@@ -1,110 +1,234 @@
-# 📱 Agendoo Backend - Fase 1 (MVP Core)
+# 💄 Agendoo - Plataforma de Servicios de Belleza
 
-> Backend para plataforma de reservas de barberos construido con NestJS, PostgreSQL 15 y GraphQL
+![Node.js](https://img.shields.io/badge/Node.js-18+-green?style=flat&logo=node.js)
+![Docker](https://img.shields.io/badge/Docker-Compose-blue?style=flat&logo=docker)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?style=flat&logo=postgresql)
+![License](https://img.shields.io/badge/License-Proprietary-red?style=flat)
+![Commercial](https://img.shields.io/badge/Commercial-License%20Required-orange?style=flat)
 
-## 🎯 ¿Qué es Agendoo?
+> 🚀 **Conectando profesionales de la belleza con clientes a través de tecnología de vanguardia**
 
-**Agendoo** es una plataforma que conecta barberos y barbershops con clientes a través de aplicaciones móviles React Native. Los clientes pueden encontrar barberos cercanos, ver sus servicios, hacer reservas y pagar de forma segura.
+Agendoo es una plataforma integral que revoluciona la forma en que los clientes descubren y reservan servicios de belleza. Conectamos a una amplia gama de profesionales del sector con clientes que buscan experiencias excepcionales, todo a través de nuestras aplicaciones móviles intuitivas y un backend robusto.
 
-### 🏗️ Fase 1 - MVP Core (Lo que tenemos ahora)
+## 🌟 ¿Qué es Agendoo?
 
-En esta primera fase hemos construido las funcionalidades esenciales:
+Nuestra plataforma ha evolucionado desde sus inicios enfocados únicamente en barbería, para convertirse en un ecosistema completo que abarca todo el mundo de la belleza y el bienestar personal.
 
-#### ✅ **Sistema de Autenticación Completo**
-- 🔐 Login/Registro tradicional con email y contraseña
-- 🌐 Autenticación OAuth con Google, Facebook y Apple ID
-- 🔑 JWT tokens para sesiones seguras
-- 👥 Roles diferenciados: Cliente, Barbero, Administrador
+### 👥 Tipos de Profesionales
+- 💇‍♂️ **Barberos** - Cortes tradicionales y modernos
+- 💅 **Nail Artists** - Manicure, pedicure y nail art
+- 💄 **Makeup Artists** - Maquillaje profesional y eventos
+- ✂️ **Estilistas** - Cortes, peinados y tratamientos capilares
+- 🏢 **Salones de Belleza** - Servicios integrales
+- 🧘‍♀️ **Spas** - Relajación y tratamientos corporales
+- 🧴 **Especialistas en Cuidado de Piel** - Tratamientos faciales y dermatológicos
 
-#### ✅ **Gestión de Usuarios**
-- 👤 Perfiles personalizables con foto, teléfono, dirección
-- 📍 Geolocalización para ubicar barberos cercanos
-- ⚡ Onboarding diferenciado según tipo de usuario
+## 🏗️ Arquitectura Técnica
 
-#### ✅ **Sistema de Barberos**
-- 🏪 Perfiles de negocio con información detallada
-- ✂️ Catálogo de servicios (cortes, precios, duración)
-- ⭐ Sistema básico de calificaciones
-- 📍 Búsqueda geoespacial por proximidad
-
-#### ✅ **Sistema de Reservas**
-- 📅 Crear reservas con fecha/hora específica
-- 🔄 Estados de reserva (Pendiente, Confirmada, Cancelada, Completada)
-- 📝 Notas adicionales para el barbero
-- 📋 Historial de reservas para clientes y barberos
-
-#### ✅ **API GraphQL Robusta**
-- 🔍 Queries optimizadas para evitar N+1 queries
-- 🛡️ Validación y sanitización de inputs
-- 📊 Esquema auto-documentado
-- 🎮 GraphQL Playground para testing
-
-## 🛠️ Tecnologías Utilizadas
-
-| Tecnología | Versión | Propósito |
-|------------|---------|-----------|
-| **NestJS** | 10.x | Framework backend modular |
-| **GraphQL** | 16.x | API query language |
-| **TypeORM** | 0.3.x | ORM para base de datos |
-| **PostgreSQL** | 15 | Base de datos principal |
-| **PostGIS** | Latest | Extensión para geolocalización |
-| **Redis** | 7.x | Cache y sesiones |
-| **JWT** | Latest | Autenticación stateless |
-| **Passport** | Latest | Estrategias de autenticación |
-| **Bcrypt** | Latest | Hashing de contraseñas |
-
-## 🚀 Instalación y Setup
-
-### Requisitos Previos
-- **Node.js 18+** 
-- **Yarn 1.22+** 
-- **Docker & Docker Compose** (para desarrollo)
-- **PostgreSQL 15** (opcional si usas Docker)
-
-### 1. **Instalación de Dependencias**
-```bash
-# Instalar TODAS las dependencias necesarias
-yarn install
-
-# Verificar instalación
-yarn install --check-files
+### Backend (Nest.js + GraphQL)
+```
+📦 Backend Stack
+├── 🚀 Nest.js - Framework principal
+├── 🗃️ PostgreSQL 15 - Base de datos
+├── 🔗 GraphQL - API layer
+├── 🔐 JWT Auth - Autenticación segura
+├── 📍 Geolocation Services - Búsqueda por ubicación
+└── 💳 Payment Integration - Procesamiento de pagos
 ```
 
-### 2. **Configurar Base de Datos (PostgreSQL 15)**
-```bash
-# Iniciar PostgreSQL 15 con Docker
-docker-compose up -d postgres redis
-
-# Verificar que está funcionando
-docker ps
-
-# Ver logs si hay problemas
-docker-compose logs postgres
+### Aplicaciones Móviles
+```
+📱 Mobile Apps (React Native)
+├── 👤 Cliente App - Descubrir y reservar servicios
+└── 💼 Professional App - Gestionar agenda y servicios
 ```
 
-### 3. **Configurar Variables de Entorno**
+## 🎯 Características Principales
+
+### Para Clientes
+- 🔍 **Búsqueda Inteligente** - Encuentra profesionales por ubicación, servicios y valoraciones
+- 📅 **Reservas en Tiempo Real** - Sistema de booking instantáneo
+- 💸 **Pagos Seguros** - Múltiples métodos de pago integrados
+- ⭐ **Sistema de Valoraciones** - Reviews y ratings transparentes
+- 🔔 **Notificaciones** - Recordatorios y actualizaciones en tiempo real
+
+### Para Profesionales
+- 📊 **Dashboard Completo** - Gestión de agenda, servicios y finanzas
+- ✅ **Verificación Profesional** - Proceso de validación de credenciales
+- 💰 **Gestión de Ingresos** - Seguimiento de ganancias y comisiones
+- 📈 **Analytics** - Métricas de rendimiento y crecimiento
+- 🛠️ **Personalización** - Configuración de servicios, precios y disponibilidad
+
+## 🔧 Stack Tecnológico
+
+### Backend
+- **Framework**: Nest.js con TypeScript
+- **Base de Datos**: PostgreSQL 15 con optimizaciones geoespaciales
+- **API**: GraphQL con resolvers optimizados
+- **Autenticación**: JWT con refresh tokens
+- **Cache**: Redis para datos frecuentes
+- **Files**: AWS S3 para almacenamiento multimedia
+- **Payments**: Stripe/PayPal integration
+- **Real-time**: WebSocket subscriptions
+
+### Mobile
+- **Framework**: React Native
+- **State Management**: Redux Toolkit
+- **Navigation**: React Navigation 6
+- **Maps**: Google Maps API
+- **Push Notifications**: Firebase Cloud Messaging
+
+### DevOps & Infrastructure
+- **Containerización**: Docker & Docker Compose
+- **CI/CD**: GitHub Actions
+- **Monitoring**: Prometheus + Grafana
+- **Logs**: ELK Stack
+- **Deploy**: AWS ECS/EKS
+
+## 📊 Arquitectura de la Base de Datos
+
+### Esquema Principal
+```sql
+-- Usuarios unificados con roles simplificados
+Users (id, email, role: CLIENT | PROFESSIONAL | ADMIN)
+
+-- Profesionales con tipos específicos
+Professionals (
+  user_id, 
+  type: BARBER | NAIL_ARTIST | MAKEUP_ARTIST | HAIR_STYLIST | BEAUTY_SALON | SPA | SKINCARE_SPECIALIST,
+  verified_at,
+  location,
+  rating
+)
+
+-- Servicios flexibles por profesional
+Services (id, professional_id, name, duration, price, category)
+
+-- Sistema de reservas robusto
+Bookings (id, client_id, professional_id, service_id, date, status, payment_status)
+```
+
+## 🚀 Instalación y Configuración
+
+### Prerequisitos
+- Node.js 18+
+- Docker & Docker Compose
+- PostgreSQL 15
+
+### Setup Rápido
 ```bash
-# Copiar archivo de ejemplo
+# Clonar el repositorio
+git clone https://github.com/tu-org/agendoo-backend.git
+cd agendoo-backend
+
+# Instalar dependencias
+npm install
+
+# Configurar variables de entorno
 cp .env.example .env
 
-# Editar con tus configuraciones
-nano .env  # o tu editor preferido
-```
+# Levantar servicios con Docker
+docker-compose up -d
 
-### 4. **Inicializar Base de Datos**
-```bash
 # Ejecutar migraciones
-yarn migration:run
+npm run migration:run
 
-# Verificar que se aplicaron correctamente
-yarn typeorm migration:show
+# Iniciar en modo desarrollo
+npm run start:dev
 ```
 
-### 5. **Iniciar Servidor de Desarrollo**
+### Variables de Entorno Requeridas
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/agendoo
+JWT_SECRET=your-super-secret-key
+STRIPE_SECRET_KEY=sk_test_...
+AWS_ACCESS_KEY_ID=your-aws-key
+GOOGLE_MAPS_API_KEY=your-maps-key
+```
+
+## 📋 Scripts Disponibles
+
 ```bash
-# Iniciar con hot reload
-yarn start:dev
+# Desarrollo
+npm run start:dev        # Servidor con hot reload
+npm run start:debug      # Modo debug
 
-# Deberías ver:
-# 🚀 Server running on http://localhost:4000/graphql
+# Testing
+npm run test            # Unit tests
+npm run test:e2e        # Integration tests
+npm run test:cov        # Coverage report
+
+# Producción
+npm run build           # Build optimizado
+npm run start:prod      # Servidor producción
+
+# Base de datos
+npm run migration:create  # Crear migración
+npm run migration:run     # Ejecutar migraciones
+npm run seed             # Poblar datos iniciales
 ```
+
+## 🧪 Testing
+
+Nuestro enfoque de testing cubre múltiples niveles:
+
+```bash
+# Tests unitarios con cobertura >80%
+npm run test
+
+# Tests de integración con base de datos en memoria
+npm run test:e2e
+
+# Tests de carga para endpoints críticos
+npm run test:load
+```
+
+## 📈 Evolución del Proyecto
+
+### ✅ Changelog Reciente
+
+**🔄 Migración de Roles Simplificada**
+- **Antes**: `UserRole.BARBER` específico solo para barberos
+- **Después**: `UserRole.PROFESSIONAL` unificado para todos los profesionales
+- **Beneficio**: Mayor escalabilidad y simplicidad en la gestión de permisos
+
+**🎨 Nueva Arquitectura de Profesionales**
+- Separación clara entre rol de usuario y tipo de profesional
+- Fácil extensión para nuevos tipos de servicios
+- Lógica de permisos uniforme y consistente
+
+## 🔒 Seguridad
+
+### Medidas Implementadas
+- 🔐 **Autenticación JWT** con refresh tokens
+- 🛡️ **Validación de entrada** exhaustiva en todos los endpoints
+- 🚫 **Rate Limiting** para prevenir abuso de API
+- 🔒 **Encriptación** de datos sensibles en base de datos
+- 🏥 **Cumplimiento OWASP** en diseño de API
+- 💳 **PCI DSS** compliance para procesamiento de pagos
+
+## 📄 Licencia
+
+Este proyecto es **software propietario** y requiere una **licencia comercial** para su uso. 
+
+Para más información sobre licenciamiento, contacta a nuestro equipo comercial.
+
+## 🤝 Contribución
+
+Este es un proyecto privado. Para contribuciones internas, consulta nuestra [guía de contribución](CONTRIBUTING.md) y [estándares de código](CODE_STANDARDS.md).
+
+## 📞 Soporte
+
+- 📧 **Tech Support**: tech@agendoo.com
+- 💼 **Business**: business@agendoo.com
+- 🐛 **Bug Reports**: Usar el sistema interno de tickets
+
+---
+
+<div align="center">
+
+**🚀 Desarrollado con ❤️ por el equipo de Agendoo**
+
+*Transformando la industria de la belleza, una reserva a la vez*
+
+</div>
