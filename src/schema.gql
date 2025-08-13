@@ -1,0 +1,271 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AuthResponse {
+  accessToken: String!
+  refreshToken: String!
+  requiresOnboarding: Boolean!
+  user: User!
+}
+
+type Booking {
+  client: User!
+  createdAt: DateTime!
+  dateTime: DateTime!
+  id: ID!
+  notes: String
+  professional: Professional!
+  service: Service!
+  status: BookingStatus!
+  updatedAt: DateTime!
+}
+
+enum BookingStatus {
+  CANCELLED
+  COMPLETED
+  CONFIRMED
+  PENDING
+}
+
+enum BusinessSize {
+  INDIVIDUAL
+  LARGE_BUSINESS
+  MEDIUM_BUSINESS
+  SMALL_BUSINESS
+}
+
+input CreateBookingInput {
+  dateTime: String!
+  notes: String
+  professionalId: String!
+  serviceId: String!
+}
+
+input CreateReviewInput {
+  bookingId: String!
+  comment: String
+  rating: Int!
+}
+
+input CreateServiceInput {
+  category: ServiceCategory!
+  description: String
+  duration: Int!
+  name: String!
+  price: Float!
+  requirements: String
+  tags: [String!]
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type Media {
+  altText: String
+  caption: String
+  createdAt: DateTime!
+  filename: String!
+  id: ID!
+  mimeType: String!
+  size: Float!
+  type: MediaType!
+  url: String!
+}
+
+enum MediaType {
+  BUSINESS_PHOTO
+  DOCUMENT
+  PROFILE_PHOTO
+  WORK_SAMPLE
+}
+
+type Mutation {
+  createBooking(input: CreateBookingInput!): Booking!
+  createReview(input: CreateReviewInput!): Review!
+  createService(input: CreateServiceInput!): Service!
+  deleteReview(reviewId: String!): Boolean!
+  login(input: LoginInput!): AuthResponse!
+  loginWithFacebook(input: OAuthLoginInput!): AuthResponse!
+  loginWithGoogle(input: OAuthLoginInput!): AuthResponse!
+  register(input: RegisterInput!): AuthResponse!
+  updateBookingStatus(bookingId: String!, status: BookingStatus!): Booking!
+  updateProfile(input: UpdateProfileInput!): Profile!
+  updateReview(input: CreateReviewInput!, reviewId: String!): Review!
+}
+
+input OAuthLoginInput {
+  token: String!
+  userType: UserRole!
+}
+
+type Professional {
+  averageRating: Float!
+  businessName: String!
+  businessSize: BusinessSize!
+  cancellationHours: Float!
+  createdAt: DateTime!
+  description: String
+  facebook: String
+  id: ID!
+  instagram: String
+  instantBooking: Boolean!
+  media: [Media!]!
+  reviews: [Review!]!
+  services: [Service!]!
+  specialties: String
+  totalReviews: Float!
+  type: ProfessionalType!
+  user: User!
+  verified: Boolean!
+  website: String
+  workingHours: String
+}
+
+input ProfessionalFiltersInput {
+  amenityIds: [String!]
+  instantBookingOnly: Boolean
+  lat: Float
+  limit: Int
+  lng: Float
+  maxPrice: Float
+  minPrice: Float
+  minRating: Float
+  offset: Int
+  radius: Float
+  serviceCategories: [ServiceCategory!]
+  types: [ProfessionalType!]
+  verifiedOnly: Boolean
+}
+
+enum ProfessionalType {
+  BARBER
+  BARBERSHOP
+  BEAUTY_SALON
+  BROW_ARTIST
+  HAIR_STYLIST
+  LASH_ARTIST
+  MAKEUP_ARTIST
+  MASSAGE_THERAPIST
+  NAIL_ARTIST
+  NAIL_SALON
+  SKINCARE_SPECIALIST
+  SPA
+}
+
+type Profile {
+  address: String
+  avatarUrl: String
+  id: String!
+  lat: Float
+  lng: Float
+  name: String!
+  onboardingCompleted: Boolean!
+  phone: String
+}
+
+type Query {
+  canReview(bookingId: String!): Boolean!
+  getBarbers: [Professional!]!
+  getBeautySalons: [Professional!]!
+  getMakeupArtists: [Professional!]!
+  getMyBookings: [Booking!]!
+  getMyReviews: [Review!]!
+  getNailArtists: [Professional!]!
+  getProfessional(id: String!): Professional!
+  getProfessionals(filters: ProfessionalFiltersInput): [Professional!]!
+  getProfessionalsByType(type: ProfessionalType!): [Professional!]!
+  getReview(id: String!): Review!
+  getReviewsByProfessional(professionalId: String!): [Review!]!
+  getServices(professionalId: String!): [Service!]!
+  getServicesByCategory(category: ServiceCategory!, professionalId: String!): [Service!]!
+  me: User!
+}
+
+input RegisterInput {
+  email: String!
+  name: String!
+  password: String!
+  role: UserRole
+}
+
+type Review {
+  client: User!
+  comment: String
+  createdAt: DateTime!
+  id: ID!
+  professional: Professional!
+  rating: Int!
+  updatedAt: DateTime!
+}
+
+type Service {
+  active: Boolean!
+  category: ServiceCategory!
+  description: String
+  duration: Int!
+  id: ID!
+  isPopular: Boolean!
+  name: String!
+  price: Float!
+  requirements: String
+  tags: [String!]
+}
+
+enum ServiceCategory {
+  BEARD_TRIM
+  BRIDAL_MAKEUP
+  CONSULTATION
+  EVERYDAY_MAKEUP
+  EYEBROW_SHAPING
+  EYELASH_EXTENSIONS
+  EYELASH_LIFT
+  FACIAL
+  FACIAL_TREATMENT
+  HAIRCUT
+  HAIR_COLOR
+  HAIR_STYLING
+  HAIR_TREATMENT
+  MANICURE
+  MUSTACHE
+  NAIL_ART
+  NAIL_EXTENSIONS
+  PACKAGE_DEAL
+  PEDICURE
+  RELAXING_MASSAGE
+  SHAVE
+  SKIN_CONSULTATION
+  SPECIAL_EVENT_MAKEUP
+  THERAPEUTIC_MASSAGE
+}
+
+input UpdateProfileInput {
+  address: String
+  lat: Float
+  lng: Float
+  name: String
+  phone: String
+}
+
+type User {
+  createdAt: DateTime!
+  email: String!
+  emailVerified: Boolean!
+  id: ID!
+  profile: Profile
+  role: UserRole!
+  updatedAt: DateTime!
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+  PROFESSIONAL
+}
