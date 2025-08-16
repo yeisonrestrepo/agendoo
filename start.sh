@@ -9,7 +9,7 @@ echo "Database Host: $DB_HOST"
 # Ejecutar migraciones si está habilitado
 if [ "$RUN_MIGRATIONS" = "true" ]; then
   echo "📊 Running database migrations..."
-  yarn typeorm migration:run
+  yarn typeorm migration:run -d dist/data-source.js
 fi
 
 # Iniciar la aplicación

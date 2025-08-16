@@ -13,19 +13,18 @@ services:
       - "4000:4000"
     
     # =====================================
-    # OPCIÓN 1: Usar archivo .env.production directamente
+    # Variables de entorno desde archivo
     # =====================================
     env_file:
       - .env.production
     
     # =====================================
-    # OPCIÓN 2: Interpolación de variables (opcional)
+    # Sobrescribir variables específicas
     # =====================================
     environment:
-      # Estas sobrescriben las del archivo si es necesario
-      - NODE_ENV=${NODE_ENV:-production}
-      - PORT=${PORT:-4000}
-      # Las demás variables vienen del .env.production
+      - NODE_ENV=production
+      - PORT=4000
+      - RUN_MIGRATIONS=false  # Deshabilitar hasta configurar TypeORM
     
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -39,7 +38,7 @@ services:
       start_period: 40s
 
   # =====================================
-  # Nginx (Opcional)
+  # Nginx - Solo HTTP
   # =====================================
   nginx:
     image: nginx:alpine
@@ -47,9 +46,8 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
-      - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/nginx-http.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - agendoo-api
     healthcheck:
@@ -58,7 +56,6 @@ services:
       timeout: 10s
       retries: 3
 
-# No necesitamos volúmenes para PostgreSQL/Redis
 volumes:
   nginx_logs:
     driver: local
