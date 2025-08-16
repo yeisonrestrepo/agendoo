@@ -1,6 +1,6 @@
 services:
   # =====================================
-  # Backend API - Agendoo
+  # Solo Backend API - Agendoo
   # =====================================
   agendoo-api:
     build:
@@ -11,96 +11,35 @@ services:
     restart: unless-stopped
     ports:
       - "4000:4000"
+    
+    # =====================================
+    # OPCIÓN 1: Usar archivo .env.production directamente
+    # =====================================
+    env_file:
+      - .env.production
+    
+    # =====================================
+    # OPCIÓN 2: Interpolación de variables (opcional)
+    # =====================================
     environment:
-      - NODE_ENV=production
-      - PORT=4000
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USERNAME=agendoo_user
-      - DB_PASSWORD=${DB_PASSWORD:-agendoo_secure_pass_2024}
-      - DB_NAME=agendoo_db
-      - JWT_SECRET=${JWT_SECRET:-super_secure_jwt_secret_key_for_production}
-      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-super_secure_refresh_secret_key}
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
-      - RUN_MIGRATIONS=true
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - agendoo-network
+      # Estas sobrescriben las del archivo si es necesario
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=${PORT:-4000}
+      # Las demás variables vienen del .env.production
+    
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./logs:/app/logs
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4000/graphql"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
 
   # =====================================
-  # Base de Datos PostgreSQL
-  # =====================================
-  postgres:
-    image: postgres:15-alpine
-    container_name: agendoo-postgres
-    restart: unless-stopped
-    environment:
-      - POSTGRES_DB=agendoo_db
-      - POSTGRES_USER=agendoo_user
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-agendoo_secure_pass_2024}
-      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./database/init:/docker-entrypoint-initdb.d
-    networks:
-      - agendoo-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U agendoo_user -d agendoo_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    command: >
-      postgres
-      -c shared_preload_libraries=pg_stat_statements
-      -c pg_stat_statements.max=10000
-      -c pg_stat_statements.track=all
-      -c max_connections=200
-      -c shared_buffers=256MB
-      -c effective_cache_size=1GB
-      -c work_mem=4MB
-      -c maintenance_work_mem=64MB
-
-  # =====================================
-  # Redis para Cache y Sesiones
-  # =====================================
-  redis:
-    image: redis:7-alpine
-    container_name: agendoo-redis
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-      - ./redis/redis.conf:/etc/redis/redis.conf:ro
-    networks:
-      - agendoo-network
-    command: redis-server /etc/redis/redis.conf
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-      start_period: 30s
-
-  # =====================================
-  # Nginx Reverse Proxy
+  # Nginx (Opcional)
   # =====================================
   nginx:
     image: nginx:alpine
@@ -111,52 +50,15 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/sites-enabled:/etc/nginx/sites-enabled:ro
-      - ./certbot/conf:/etc/letsencrypt:ro
-      - ./certbot/www:/var/www/certbot:ro
-      - nginx_logs:/var/log/nginx
     depends_on:
       - agendoo-api
-    networks:
-      - agendoo-network
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
       interval: 30s
       timeout: 10s
       retries: 3
 
-  # =====================================
-  # SSL/TLS con Certbot (Opcional)
-  # =====================================
-  certbot:
-    image: certbot/certbot
-    container_name: agendoo-certbot
-    restart: "no"
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    networks:
-      - agendoo-network
-    profiles:
-      - ssl
-
-# =====================================
-# Volúmenes Persistentes
-# =====================================
+# No necesitamos volúmenes para PostgreSQL/Redis
 volumes:
-  postgres_data:
-    driver: local
-  redis_data:
-    driver: local
   nginx_logs:
     driver: local
-
-# =====================================
-# Red Personalizada
-# =====================================
-networks:
-  agendoo-network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
