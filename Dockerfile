@@ -58,27 +58,8 @@ COPY --from=deps --chown=nestjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
 COPY --from=builder --chown=nestjs:nodejs /app/package.json ./package.json
 
-# Crear script de inicio
-COPY --chown=nestjs:nodejs <<EOF /app/start.sh
-#!/bin/sh
-set -e
-
-echo "🚀 Starting Agendoo Backend..."
-echo "Environment: \$NODE_ENV"
-echo "Port: \$PORT"
-echo "Database Host: \$DB_HOST"
-
-# Ejecutar migraciones si está habilitado
-if [ "\$RUN_MIGRATIONS" = "true" ]; then
-  echo "📊 Running database migrations..."
-  yarn typeorm migration:run
-fi
-
-# Iniciar la aplicación
-echo "🎯 Starting application..."
-exec dumb-init node dist/main.js
-EOF
-
+# Copiar script de inicio
+COPY --chown=nestjs:nodejs start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
 # Cambiar al usuario no-root
