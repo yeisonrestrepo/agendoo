@@ -10,6 +10,7 @@ import { CommonModule } from './common/common.module';
 import { UsersModule } from './users/users.module';
 import { ProfessionalsModule } from './professionals/professionals.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { ReviewsModule } from './reviews/reviews.module';
       cache: 'bounded',
     }),
 
+    HealthModule, 
     UsersModule,
     BookingsModule,
     CommonModule,

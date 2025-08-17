@@ -58,10 +58,27 @@ input CreateServiceInput {
   tags: [String!]
 }
 
+type DatabaseHealthResponse {
+  connected: Boolean!
+  database: String
+  host: String
+  responseTime: Float
+  status: String!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type HealthResponse {
+  environment: String
+  message: String!
+  status: String!
+  timestamp: String!
+  uptime: String
+  version: String!
+}
 
 input LoginInput {
   email: String!
@@ -173,6 +190,12 @@ type Profile {
 
 type Query {
   canReview(bookingId: String!): Boolean!
+
+  """Database health check"""
+  databaseHealth: DatabaseHealthResponse!
+
+  """Server environment"""
+  environment: String!
   getBarbers: [Professional!]!
   getBeautySalons: [Professional!]!
   getMakeupArtists: [Professional!]!
@@ -186,7 +209,19 @@ type Query {
   getReviewsByProfessional(professionalId: String!): [Review!]!
   getServices(professionalId: String!): [Service!]!
   getServicesByCategory(category: ServiceCategory!, professionalId: String!): [Service!]!
+
+  """Health check endpoint"""
+  health: HealthResponse!
   me: User!
+
+  """Simple health check"""
+  ping: String!
+
+  """Current server timestamp"""
+  timestamp: String!
+
+  """API version information"""
+  version: VersionResponse!
 }
 
 input RegisterInput {
@@ -268,4 +303,12 @@ enum UserRole {
   ADMIN
   CLIENT
   PROFESSIONAL
+}
+
+type VersionResponse {
+  buildTime: String!
+  environment: String!
+  name: String!
+  nodeVersion: String!
+  version: String!
 }
