@@ -33,9 +33,18 @@ COPY . .
 # Instalar dependencias de desarrollo para el build
 RUN yarn install --frozen-lockfile
 
+# Verificar archivos antes del build
+RUN echo "📁 Files before build:" && ls -la src/
+
 # Build de la aplicación
 ENV NODE_ENV=production
 RUN yarn build
+
+# Verificar archivos después del build
+RUN echo "📁 Files after build:" && \
+    ls -la dist/ && \
+    echo "📄 Looking for main.js:" && \
+    find dist/ -name "main.js" -type f
 
 # ---- Production Stage ----
 FROM base AS runner
@@ -58,9 +67,26 @@ COPY --from=deps --chown=nestjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
 COPY --from=builder --chown=nestjs:nodejs /app/package.json ./package.json
 
-# Copiar script de inicio
-COPY --chown=nestjs:nodejs start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+# Crear script de inicio
+RUN echo '#!/bin/sh' > /app/start.sh && \
+    echo 'set -e' >> /app/start.sh && \
+    echo '' >> /app/start.sh && \
+    echo 'echo "🚀 Starting Agendoo Backend..."' >> /app/start.sh && \
+    echo 'echo "Environment: $NODE_ENV"' >> /app/start.sh && \
+    echo 'echo "Port: $PORT"' >> /app/start.sh && \
+    echo 'echo "Database Host: $DB_HOST"' >> /app/start.sh && \
+    echo '' >> /app/start.sh && \
+    echo '# Ejecutar migraciones si está habilitado' >> /app/start.sh && \
+    echo 'if [ "$RUN_MIGRATIONS" = "true" ]; then' >> /app/start.sh && \
+    echo '  echo "📊 Running database migrations..."' >> /app/start.sh && \
+    echo '  yarn typeorm migration:run' >> /app/start.sh && \
+    echo 'fi' >> /app/start.sh && \
+    echo '' >> /app/start.sh && \
+    echo '# Iniciar la aplicación' >> /app/start.sh && \
+    echo 'echo "🎯 Starting application..."' >> /app/start.sh && \
+    echo 'exec dumb-init node dist/main.js' >> /app/start.sh && \
+    chmod +x /app/start.sh && \
+    chown nestjs:nodejs /app/start.sh
 
 # Cambiar al usuario no-root
 USER nestjs
