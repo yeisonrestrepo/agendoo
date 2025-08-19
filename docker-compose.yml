@@ -11,13 +11,13 @@ services:
     restart: unless-stopped
     ports:
       - "4000:4000"
-    
+
     # =====================================
     # OPCIÓN 1: Usar archivo .env.production directamente
     # =====================================
     env_file:
       - .env.production
-    
+
     # =====================================
     # OPCIÓN 2: Interpolación de variables (opcional)
     # =====================================
@@ -26,13 +26,16 @@ services:
       - NODE_ENV=${NODE_ENV:-production}
       - PORT=${PORT:-4000}
       # Las demás variables vienen del .env.production
-    
+
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
       - ./logs:/app/logs
+    networks:
+      - deriv-trading-bot_trading-network
+    external: true
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4000/health"]
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4000/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -53,7 +56,7 @@ services:
     depends_on:
       - agendoo-api
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -62,3 +65,7 @@ services:
 volumes:
   nginx_logs:
     driver: local
+
+networks:
+  deriv-trading-bot_trading-network:
+    external: true
