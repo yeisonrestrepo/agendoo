@@ -1,7 +1,4 @@
 # =====================================
-# Docker Compose para Agendoo API
-# Configuración para coexistir con deriv-trading-bot
-#
 # Template para configuración común de agendoo
 # =====================================
 x-agendoo-common: &agendoo-common
@@ -80,13 +77,10 @@ services:
         limits:
           memory: 1G
           cpus: '0.5'
-        reservations:
-          memory: 512M
-          cpus: '0.2'
     
-    # Conexión a red externa de trading-bot para acceder a Redis
-    external_links:
-      - trading-redis-prod:trading-redis-prod
+    networks:
+      - agendoo-network
+      - default
 
   # =====================================
   # PostgreSQL para Agendoo (instancia independiente)
@@ -132,9 +126,6 @@ services:
         limits:
           memory: 1G
           cpus: '0.3'
-        reservations:
-          memory: 256M
-          cpus: '0.1'
 
 # =====================================
 # Volúmenes persistentes
@@ -154,14 +145,3 @@ networks:
   # Red interna para servicios de Agendoo
   agendoo-network:
     driver: bridge
-    driver_opts:
-      com.docker.network.driver.mtu: 1450
-    ipam:
-      config:
-        - subnet: 172.19.0.0/16
-          gateway: 172.19.0.1
-  
-  # Red externa para conectar con Redis de trading-bot
-  default:
-    external: true
-    name: deriv-trading-bot_trading-network
