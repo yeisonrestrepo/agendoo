@@ -1,6 +1,7 @@
 import { ObjectType, Field, Float } from '@nestjs/graphql';
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
+import { Gender } from '../enums/gender.enum';
 
 @Entity('profiles')
 @ObjectType()
@@ -19,6 +20,10 @@ export class Profile {
   @Column({ nullable: true })
   @Field({ nullable: true })
   avatarUrl?: string;
+
+  @Column({ type: 'enum', enum: Gender, nullable: true })
+  @Field(() => Gender, { nullable: true })
+  gender?: Gender;
 
   @Column({ nullable: true })
   @Field({ nullable: true })

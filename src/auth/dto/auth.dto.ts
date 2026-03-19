@@ -40,7 +40,8 @@ export class OAuthLoginInput {
   @IsString()
   token: string;
 
-  @Field(() => UserRole)
+  @Field(() => UserRole, { nullable: true })
   @IsEnum(UserRole)
-  userType: UserRole;
+  @IsOptional()
+  userType?: UserRole;
 }

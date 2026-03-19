@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from './entities/review.entity';
 import { Booking, BookingStatus } from '../bookings/entities/booking.entity';
-import { ProfessionalsService } from '../professionals/professionals.service';
+import { BusinessesService } from '../businesses/businesses.service';
 import { CreateReviewInput } from './dto/review.dto';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class ReviewsService {
     private reviewsRepository: Repository<Review>,
     @InjectRepository(Booking)
     private bookingsRepository: Repository<Booking>,
-    private professionalsService: ProfessionalsService,
+    private businessesService: BusinessesService,
   ) {}
 
   async createReview(
@@ -21,17 +21,15 @@ export class ReviewsService {
     input: CreateReviewInput,
   ): Promise<Review> {
     const booking = await this.bookingsRepository.findOne({
-      where: { 
+      where: {
         id: input.bookingId,
         clientId,
-        status: BookingStatus.COMPLETED 
+        status: BookingStatus.FINALIZED
       },
     });
 
     if (!booking) {
-      throw new BadRequestException(
-        'Solo puedes calificar reservas completadas'
-      );
+      throw new BadRequestException('You can only review finalized bookings');
     }
 
     const existingReview = await this.reviewsRepository.findOne({
@@ -39,40 +37,38 @@ export class ReviewsService {
     });
 
     if (existingReview) {
-      throw new BadRequestException(
-        'Ya has calificado esta reserva'
-      );
+      throw new BadRequestException('You have already reviewed this booking');
     }
 
     const review = this.reviewsRepository.create({
       clientId,
-      professionalId: booking.professionalId,
+      businessId: booking.businessId,
       bookingId: input.bookingId,
       rating: input.rating,
       comment: input.comment,
+      verified: true,
     });
 
     const saved = await this.reviewsRepository.save(review);
 
-    await this.professionalsService.updateAverageRating(booking.professionalId);
+    await this.businessesService.updateAverageRating(booking.businessId);
 
     return saved;
   }
 
-  async getReviewsByProfessional(professionalId: string): Promise<Review[]> {
+  async getReviewsByBusiness(businessId: string): Promise<Review[]> {
     return this.reviewsRepository.find({
-      where: { professionalId },
-      relations: ['client', 'client.profile'],
+      where: { businessId },
       order: { createdAt: 'DESC' },
     });
   }
 
   async canReview(clientId: string, bookingId: string): Promise<boolean> {
     const booking = await this.bookingsRepository.findOne({
-      where: { 
+      where: {
         id: bookingId,
         clientId,
-        status: BookingStatus.COMPLETED 
+        status: BookingStatus.FINALIZED
       },
     });
 
@@ -88,7 +84,6 @@ export class ReviewsService {
   async getReviewById(id: string): Promise<Review> {
     const review = await this.reviewsRepository.findOne({
       where: { id },
-      relations: ['client', 'client.profile', 'professional', 'professional.user', 'professional.user.profile'],
     });
 
     if (!review) {
@@ -101,7 +96,6 @@ export class ReviewsService {
   async getReviewsByClient(clientId: string): Promise<Review[]> {
     return this.reviewsRepository.find({
       where: { clientId },
-      relations: ['professional', 'professional.user', 'professional.user.profile'],
       order: { createdAt: 'DESC' },
     });
   }
@@ -129,7 +123,7 @@ export class ReviewsService {
 
     const updated = await this.reviewsRepository.save(review);
 
-    await this.professionalsService.updateAverageRating(review.professionalId);
+    await this.businessesService.updateAverageRating(review.businessId);
 
     return updated;
   }
@@ -143,24 +137,38 @@ export class ReviewsService {
       throw new NotFoundException('Review not found or you do not have permission to delete it');
     }
 
+    const businessId = review.businessId;
     await this.reviewsRepository.remove(review);
 
-    await this.professionalsService.updateAverageRating(review.professionalId);
+    await this.businessesService.updateAverageRating(businessId);
 
     return true;
   }
 
-  async getAverageRating(professionalId: string): Promise<{ average: number; total: number }> {
-    const result = await this.reviewsRepository
-      .createQueryBuilder('review')
-      .select('AVG(review.rating)', 'average')
-      .addSelect('COUNT(review.id)', 'total')
-      .where('review.professionalId = :professionalId', { professionalId })
-      .getRawOne();
+  async flagReview(reviewId: string, reason: string): Promise<Review> {
+    const review = await this.reviewsRepository.findOne({ where: { id: reviewId } });
 
-    return {
-      average: parseFloat(result.average) || 0,
-      total: parseInt(result.total) || 0,
-    };
+    if (!review) {
+      throw new NotFoundException('Review not found');
+    }
+
+    review.flagged = true;
+    review.flagReason = reason;
+
+    return this.reviewsRepository.save(review);
   }
+
+  async unflagReview(reviewId: string): Promise<Review> {
+    const review = await this.reviewsRepository.findOne({ where: { id: reviewId } });
+
+    if (!review) {
+      throw new NotFoundException('Review not found');
+    }
+
+    review.flagged = false;
+    review.flagReason = undefined;
+
+    return this.reviewsRepository.save(review);
+  }
+
 }

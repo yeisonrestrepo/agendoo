@@ -3,6 +3,9 @@
 /node_modules
 /build
 
+# Docker local data (PostgreSQL bind mount from docker compose)
+/data
+
 # Logs
 logs
 *.log

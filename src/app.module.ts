@@ -6,10 +6,17 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { BookingsModule } from './bookings/bookings.module';
-import { CommonModule } from './common/common.module';
 import { UsersModule } from './users/users.module';
-import { ProfessionalsModule } from './professionals/professionals.module';
+import { BusinessesModule } from './businesses/businesses.module';
+import { EmployeesModule } from './employees/employees.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { ServiceCatalogModule } from './service-catalog/service-catalog.module';
+import { AvailabilityModule } from './availability/availability.module';
+import { HealthModule } from './health/health.module';
+import { CrmModule } from './crm/crm.module';
+import { MediaModule } from './media/media.module';
+import { AmenitiesModule } from './amenities/amenities.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -17,7 +24,7 @@ import { ReviewsModule } from './reviews/reviews.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    
+
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -45,12 +52,19 @@ import { ReviewsModule } from './reviews/reviews.module';
       cache: 'bounded',
     }),
 
+    HealthModule,
     UsersModule,
     BookingsModule,
-    CommonModule,
     AuthModule,
-    ProfessionalsModule,
+    BusinessesModule,
+    EmployeesModule,
+    ServiceCatalogModule,
+    AvailabilityModule,
     ReviewsModule,
+    CrmModule,
+    MediaModule,
+    AmenitiesModule,
+    NotificationsModule,
   ],
 })
 export class AppModule {}
