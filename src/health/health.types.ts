@@ -1,4 +1,3 @@
-// src/health/health.types.ts
 import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType()

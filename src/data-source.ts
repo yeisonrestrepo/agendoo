@@ -10,7 +10,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USERNAME || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.DB_NAME || 'agendoo_db',
-  synchronize: false, // NUNCA true en producción
+  synchronize: false,
   logging: process.env.NODE_ENV === 'development',
   entities: [
     process.env.NODE_ENV === 'production' 

@@ -1,12 +1,13 @@
 import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, OneToMany, Index } from 'typeorm';
 import { Profile } from './profile.entity';
 import { OAuthConnection } from './oauth-connection.entity';
 import { Booking } from '../../bookings/entities/booking.entity';
 
 export enum UserRole {
   CLIENT = 'CLIENT',
-  PROFESSIONAL = 'PROFESSIONAL',
+  BUSINESS_OWNER = 'BUSINESS_OWNER',
+  EMPLOYEE = 'EMPLOYEE',
   ADMIN = 'ADMIN',
 }
 
@@ -15,6 +16,8 @@ registerEnumType(UserRole, {
 });
 
 @Entity('users')
+@Index(['updatedAt'])
+@Index(['emailVerificationToken'])
 @ObjectType()
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -39,6 +42,17 @@ export class User {
   @Column({ default: false })
   @Field()
   emailVerified: boolean;
+
+  /** When false the account is suspended and cannot authenticate. */
+  @Column({ default: true })
+  @Field()
+  active: boolean;
+
+  @Column({ type: 'varchar', nullable: true, select: false })
+  emailVerificationToken?: string | null;
+
+  @Column({ type: 'timestamp', nullable: true, select: false })
+  emailVerificationExpiry?: Date | null;
 
   @CreateDateColumn()
   @Field()

@@ -1,4 +1,3 @@
-// src/health/health.resolver.ts
 import { Query, Resolver } from '@nestjs/graphql';
 import { Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -48,7 +47,6 @@ export class HealthResolver {
     try {
       const startTime = Date.now();
       
-      // Hacer una query simple para verificar conexión
       await this.dataSource.query('SELECT 1');
       
       const responseTime = Date.now() - startTime;

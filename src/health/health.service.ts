@@ -1,4 +1,3 @@
-// src/health/health.service.ts
 import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DataSource } from 'typeorm';
@@ -35,10 +34,7 @@ export class HealthService {
     const uptime = process.uptime();
     const uptimeString = `${Math.floor(uptime / 3600)}h ${Math.floor((uptime % 3600) / 60)}m ${Math.floor(uptime % 60)}s`;
     
-    // Check database
     const databaseCheck = await this.checkDatabase();
-    
-    // Check memory
     const memoryUsage = process.memoryUsage();
     const memoryCheck = {
       used: `${Math.round(memoryUsage.heapUsed / 1024 / 1024)} MB`,

@@ -1,7 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, Index } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity('oauth_connections')
+@Index(['provider', 'providerId'], { unique: true })
+@Index(['userId'])
 export class OAuthConnection {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -10,13 +12,13 @@ export class OAuthConnection {
   userId: string;
 
   @Column()
-  provider: string; // 'google', 'facebook', 'apple'
+  provider: string;
 
   @Column()
   providerId: string;
 
-  @Column()
-  providerEmail: string;
+  @Column({ nullable: true })
+  providerEmail?: string;
 
   @Column({ nullable: true })
   accessToken?: string;

@@ -1,147 +1,70 @@
-# =====================================
-# Template para configuración común de agendoo
-# =====================================
-x-agendoo-common: &agendoo-common
+x-common: &common
   restart: unless-stopped
   networks:
-    - agendoo-network
-  # Configuración para shutdown graceful
+    - deriv-network
   stop_signal: SIGTERM
   stop_grace_period: 30s
 
 services:
-  # =====================================
-  # Agendoo API - Aplicación principal
-  # =====================================
-  agendoo-api:
-    <<: *agendoo-common
+  # Creates the agendoo database inside the shared deriv-postgres instance if it
+  # does not already exist, then exits. Runs before migrations on every deploy
+  # but is a no-op once the database has been created.
+  db-init:
+    image: postgres:15-alpine
+    restart: "no"
+    networks:
+      - deriv-network
+    environment:
+      PGHOST: deriv-postgres
+      PGUSER: ${DB_USERNAME:-postgres}
+      PGPASSWORD: ${DB_PASSWORD:-postgres}
+      PGDATABASE: ${DB_NAME:-agendoo}
+    command: >
+      sh -c "
+        until pg_isready; do echo 'waiting for postgres...'; sleep 2; done;
+        psql -d postgres -tc \"SELECT 1 FROM pg_database WHERE datname='$$PGDATABASE'\" | grep -q 1 ||
+        psql -d postgres -c \"CREATE DATABASE \\\"$$PGDATABASE\\\"\";
+        echo 'database ready.'
+      "
+
+  migrate:
+    <<: *common
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    restart: "no"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=deriv-postgres
+      - DB_PORT=5432
+    command: ["./node_modules/.bin/typeorm", "migration:run", "-d", "dist/data-source.js"]
+    depends_on:
+      - db-init
+
+  api:
+    <<: *common
     build:
       context: .
       dockerfile: Dockerfile
       target: production
     container_name: agendoo-api
-    hostname: agendoo-api
-    
-    # Puerto público diferente para evitar conflictos
     ports:
       - "4000:4000"
-    
+    env_file:
+      - .env
     environment:
       - NODE_ENV=production
-      - PORT=4000
-      - TZ=America/Bogota
-      
-      # Base de datos (apunta a agendoo-postgres)
-      - DB_HOST=agendoo-postgres
+      - DB_HOST=deriv-postgres
       - DB_PORT=5432
-      - DB_NAME=agendoo_db
-      - DB_USERNAME=agendoo_user
-      - DB_PASSWORD=${AGENDOO_DB_PASSWORD:-agendoo_secure_pass_2024}
-      
-      # Redis (reutiliza la instancia existente de trading-bot)
-      - REDIS_HOST=trading-redis-prod
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-defaultpassword}
-      
-      # Configuración específica de Redis para Agendoo
-      - REDIS_SESSION_DB=6
-      - REDIS_SEARCH_CACHE_DB=7
-      - REDIS_BARBER_CACHE_DB=8
-      - REDIS_NOTIFICATIONS_DB=9
-      - REDIS_UPLOADS_CACHE_DB=10
-      - REDIS_METRICS_DB=11
-    
-    env_file:
-      - .env.production
-    
-    volumes:
-      - ./logs/agendoo:/app/logs
-      - ./uploads:/app/uploads
-      - ./temp:/app/temp
-    
     depends_on:
-      agendoo-postgres:
-        condition: service_healthy
-    
-    # Health check optimizado para GraphQL
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4000/health", "||", "exit", "1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 45s
-    
-    # Recursos para máximo 10 usuarios concurrentes
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: '0.5'
-    
-    networks:
-      - agendoo-network
-      - default
+      migrate:
+        condition: service_completed_successfully
 
-  # =====================================
-  # PostgreSQL para Agendoo (instancia independiente)
-  # =====================================
-  agendoo-postgres:
-    <<: *agendoo-common
-    image: postgres:15-alpine
-    container_name: agendoo-postgres
-    hostname: agendoo-postgres
-    
-    # Puerto externo diferente para evitar conflictos con trading-bot
-    ports:
-      - "5433:5432"
-    
-    environment:
-      POSTGRES_DB: agendoo_db
-      POSTGRES_USER: agendoo_user
-      POSTGRES_PASSWORD: ${AGENDOO_DB_PASSWORD:-agendoo_secure_pass_2024}
-      PGDATA: /var/lib/postgresql/data/pgdata
-      
-      # Optimizaciones para VPS con recursos limitados
-      POSTGRES_SHARED_BUFFERS: 128MB
-      POSTGRES_EFFECTIVE_CACHE_SIZE: 512MB
-      POSTGRES_MAINTENANCE_WORK_MEM: 32MB
-      POSTGRES_WAL_BUFFERS: 8MB
-      POSTGRES_MAX_CONNECTIONS: 20
-    
-    volumes:
-      - agendoo_postgres_data:/var/lib/postgresql/data
-      - ./sql/agendoo:/docker-entrypoint-initdb.d/
-      - ./backups/agendoo:/backups
-    
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U agendoo_user -d agendoo_db"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 40s
-    
-    # Recursos optimizados para entorno de pruebas
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: '0.3'
-
-# =====================================
-# Volúmenes persistentes
-# =====================================
-volumes:
-  agendoo_postgres_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/agendoo/postgres
-
-# =====================================
-# Redes
-# =====================================
 networks:
-  # Red interna para servicios de Agendoo
-  agendoo-network:
-    driver: bridge
+  # Reuses the existing network created by deriv-trading-deploy.
+  # Run "docker compose up" in deriv-trading-deploy first so this network exists.
+  deriv-network:
+    external: true

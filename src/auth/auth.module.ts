@@ -4,8 +4,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { GoogleStrategy } from './strategies/google.strategy.';
-import { FacebookStrategy } from './strategies/facebook.strategy';
 import { GoogleOAuthService } from './services/google-oauth.service';
 import { FacebookOAuthService } from './services/facebook-oauth.service';
 import { UsersModule } from 'src/users/users.module';
@@ -28,8 +26,6 @@ import { UsersModule } from 'src/users/users.module';
         AuthService,
         AuthResolver,
         JwtStrategy,
-        GoogleStrategy,
-        FacebookStrategy,
         GoogleOAuthService,
         FacebookOAuthService,
     ],

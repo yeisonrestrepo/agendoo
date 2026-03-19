@@ -1,10 +1,12 @@
 import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { Professional } from '../../professionals/entities/professional.entity';
+import { Business } from '../../businesses/entities/business.entity';
 import { Booking } from '../../bookings/entities/booking.entity';
 
 @Entity('reviews')
+@Index(['businessId'])
+@Index(['clientId'])
 @ObjectType()
 export class Review {
   @PrimaryGeneratedColumn('uuid')
@@ -15,7 +17,7 @@ export class Review {
   clientId: string;
 
   @Column()
-  professionalId: string;
+  businessId: string;
 
   @Column({ unique: true })
   bookingId: string;
@@ -27,6 +29,21 @@ export class Review {
   @Column({ nullable: true })
   @Field({ nullable: true })
   comment?: string;
+
+  /** True when the review is linked to a finalized booking (always true for app-created reviews). */
+  @Column({ default: false })
+  @Field()
+  verified: boolean;
+
+  /** True when the review has been flagged for moderation. */
+  @Column({ default: false })
+  @Field()
+  flagged: boolean;
+
+  /** Reason provided when the review was flagged. */
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  flagReason?: string;
 
   @CreateDateColumn()
   @Field()
@@ -40,9 +57,9 @@ export class Review {
   @Field(() => User)
   client: User;
 
-  @ManyToOne(() => Professional)
-  @Field(() => Professional)
-  professional: Professional;
+  @ManyToOne(() => Business)
+  @Field(() => Business)
+  business: Business;
 
   @ManyToOne(() => Booking)
   booking: Booking;
