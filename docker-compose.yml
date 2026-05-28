@@ -5,10 +5,29 @@ x-common: &common
   stop_signal: SIGTERM
   stop_grace_period: 30s
 
+volumes:
+  postgres_data:
+
 services:
-  # Creates the agendoo database inside the shared deriv-postgres instance if it
-  # does not already exist, then exits. Runs before migrations on every deploy
-  # but is a no-op once the database has been created.
+  deriv-postgres:
+    image: postgres:15-alpine
+    container_name: deriv-postgres
+    restart: unless-stopped
+    networks:
+      - deriv-network
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-agendoo}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_NAME:-agendoo}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
   db-init:
     image: postgres:15-alpine
     restart: "no"
@@ -26,6 +45,9 @@ services:
         psql -d postgres -c \"CREATE DATABASE \\\"$$PGDATABASE\\\"\";
         echo 'database ready.'
       "
+    depends_on:
+      deriv-postgres:
+        condition: service_healthy
 
   migrate:
     <<: *common
@@ -64,7 +86,5 @@ services:
         condition: service_completed_successfully
 
 networks:
-  # Reuses the existing network created by deriv-trading-deploy.
-  # Run "docker compose up" in deriv-trading-deploy first so this network exists.
   deriv-network:
     external: true
